@@ -11,10 +11,10 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, HttpUrl
+from typing import Optional, List
 
-# Example schemas (replace with your own):
+# Example schemas (you can keep these in your DB for testing):
 
 class User(BaseModel):
     """
@@ -38,11 +38,18 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
+# App-specific schema
 # --------------------------------------------------
-
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+class Book(BaseModel):
+    """
+    Books you upload so people can read and listen to an audio summary.
+    Collection name: "book" (lowercase of class name)
+    """
+    title: str = Field(..., description="Book title")
+    author: str = Field(..., description="Author name")
+    genre: str = Field(..., description="Primary genre/category")
+    description: Optional[str] = Field(None, description="Short description or blurb")
+    cover_url: Optional[HttpUrl] = Field(None, description="Image URL for the cover")
+    content: Optional[str] = Field(None, description="Readable text content or excerpt")
+    audio_summary_url: Optional[HttpUrl] = Field(None, description="Direct URL to the audio summary (mp3, wav, etc.)")
+    tags: Optional[List[str]] = Field(default=None, description="Additional tags for search")
